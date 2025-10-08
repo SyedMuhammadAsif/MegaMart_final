@@ -1,0 +1,7 @@
+.payment-toast{position:fixed;bottom:20px;right:20px;z-index:1055}
+.toast-card{background:#0ea5e9;color:#fff;border-radius:8px;box-shadow:0 6px 18px rgba(0,0,0,0.2);min-width:280px;overflow:hidden}
+.toast-header{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:#0284c7}
+.toast-header .icon{font-weight:bold;margin-right:8px}
+.toast-header .title{font-weight:600}
+.toast-header .close{background:transparent;border:none;color:#fff;font-size:18px;cursor:pointer}
+.toast-body{padding:12px 14px;background:#0ea5e9} 

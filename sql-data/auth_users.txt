@@ -1,0 +1,8 @@
+INSERT INTO auth_users (email, password, role, created_at, updated_at, specific_role) VALUES
+('superadmin@megamart.com', '$2a$10$fU1SQ9Daf2v7iP5RouLlR.ulh.Lx2zm4DHKmxTmelmpjsxRVykg4y', 'ADMIN', '2025-09-30 11:47:15.863137', '2025-09-30 11:47:15.863137', 'SUPER_ADMIN'),
+('productmanager@megamart.com', '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2uheWG/igi.', 'ADMIN', '2025-09-30 11:47:22.782660', '2025-09-30 11:47:22.782660', 'PRODUCT_MANAGER'),
+('customermanager@megamart.com', '$2a$10$WLdZFYeBRpiG596n1HT5nuWccbrCQWofqgYzZBbS/s8Djbbkf3rNy', 'ADMIN', '2025-09-30 11:47:36.352247', '2025-09-30 11:47:36.352247', 'CUSTOMER_MANAGER'),
+('ordermanager@megamart.com', '$2a$10$FFG8XnZv1rwdMJnHdRJ.4eY4Cq1Elq7Q511OpO7h2inAXrOMpm9ZC', 'ADMIN', '2025-09-30 11:47:44.396136', '2025-09-30 11:47:44.396136', 'ORDER_MANAGER'),
+('admin@megamart.com', '$2a$10$c2oY4igAarO4Zr8SBXXYeeGHlykGRvfPF3lI5X0gbFL5SdLnYwNy.', 'ADMIN', '2025-09-30 11:54:02.882258', '2025-09-30 11:54:02.882258', 'GENERAL_ADMIN'),
+('newcustomer@example.com', '$2a$10$keDbLajKk703tYtqmbf8tumJeZKCxLlLU65r20ozHsulUMrtdVDHq', 'USER', '2025-09-30 11:59:19.517598', '2025-09-30 11:59:19.517598', 'USER'),
+('vikashmvr2004@gmail.com', '$2a$10$SeIQGdGe/iNHAposl8A/muP1Qnd3puIGFZrR12iE5zCmFVUKZ2S5m', 'USER', '2025-09-30 12:30:30.814326', '2025-09-30 12:30:30.814326', 'USER');

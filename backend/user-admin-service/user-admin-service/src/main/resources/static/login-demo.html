@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MegaMart Login Demo</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 600px; margin: 50px auto; padding: 20px; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; }
+        input { width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; }
+        button { background: #007bff; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; margin-right: 10px; }
+        button:hover { background: #0056b3; }
+        .logout-btn { background: #dc3545; }
+        .logout-btn:hover { background: #c82333; }
+        .status { margin-top: 20px; padding: 10px; border-radius: 4px; }
+        .success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .info { background: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; }
+    </style>
+</head>
+<body>
+    <h1>MegaMart Authentication Demo</h1>
+    
+    <div id="loginForm">
+        <h2>User Login</h2>
+        <div class="form-group">
+            <label for="email">Email/Username:</label>
+            <input type="text" id="email" placeholder="Enter email or username">
+        </div>
+        <div class="form-group">
+            <label for="password">Password:</label>
+            <input type="password" id="password" placeholder="Enter password">
+        </div>
+        <button onclick="login()">Login</button>
+        <button onclick="adminLogin()">Admin Login</button>
+    </div>
+
+    <div id="loggedInSection" style="display: none;">
+        <h2>Welcome!</h2>
+        <p>You are logged in.</p>
+        <button class="logout-btn" onclick="logout()">Logout</button>
+        <button class="logout-btn" onclick="adminLogout()">Admin Logout</button>
+    </div>
+
+    <div id="status"></div>
+
+    <script>
+        const API_BASE = '/api/users';
+
+        // Check if user is already logged in
+        window.onload = function() {
+            const token = sessionStorage.getItem('authToken');
+            if (token) {
+                showLoggedInState();
+                showStatus('Already logged in with stored token', 'info');
+            }
+        };
+
+        async function login() {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            if (!email || !password) {
+                showStatus('Please enter both email and password', 'error');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ email, password })
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    
+                    // Store token in session storage
+                    sessionStorage.setItem('authToken', data.token);
+                    sessionStorage.setItem('userId', data.userId);
+                    sessionStorage.setItem('userEmail', data.email);
+                    sessionStorage.setItem('userRole', data.role);
+                    
+                    showLoggedInState();
+                    showStatus(`Login successful! Welcome ${data.email} (${data.role})`, 'success');
+                } else {
+                    const error = await response.json();
+                    showStatus(`Login failed: ${error.message || 'Invalid credentials'}`, 'error');
+                }
+            } catch (error) {
+                showStatus(`Network error: ${error.message}`, 'error');
+            }
+        }
+
+        async function adminLogin() {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            if (!email || !password) {
+                showStatus('Please enter both email and password', 'error');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/admin/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ email, password })
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    
+                    // Store token in session storage
+                    sessionStorage.setItem('authToken', data.token);
+                    sessionStorage.setItem('userId', data.userId);
+                    sessionStorage.setItem('userEmail', data.email);
+                    sessionStorage.setItem('userRole', data.role);
+                    
+                    showLoggedInState();
+                    showStatus(`Admin login successful! Welcome ${data.email} (${data.role})`, 'success');
+                } else {
+                    const error = await response.json();
+                    showStatus(`Admin login failed: ${error.message || 'Invalid credentials'}`, 'error');
+                }
+            } catch (error) {
+                showStatus(`Network error: ${error.message}`, 'error');
+            }
+        }
+
+        async function logout() {
+            const token = sessionStorage.getItem('authToken');
+            
+            if (!token) {
+                showStatus('No active session found', 'error');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/logout`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (response.ok) {
+                    clearSessionStorage();
+                    showLoginState();
+                    showStatus('Logged out successfully', 'success');
+                } else {
+                    showStatus('Logout failed on server, but clearing local session', 'error');
+                    clearSessionStorage();
+                    showLoginState();
+                }
+            } catch (error) {
+                showStatus(`Network error during logout: ${error.message}`, 'error');
+                clearSessionStorage();
+                showLoginState();
+            }
+        }
+
+        async function adminLogout() {
+            const token = sessionStorage.getItem('authToken');
+            
+            if (!token) {
+                showStatus('No active session found', 'error');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/admin/logout`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (response.ok) {
+                    clearSessionStorage();
+                    showLoginState();
+                    showStatus('Admin logged out successfully', 'success');
+                } else {
+                    showStatus('Admin logout failed on server, but clearing local session', 'error');
+                    clearSessionStorage();
+                    showLoginState();
+                }
+            } catch (error) {
+                showStatus(`Network error during admin logout: ${error.message}`, 'error');
+                clearSessionStorage();
+                showLoginState();
+            }
+        }
+
+        function clearSessionStorage() {
+            sessionStorage.removeItem('authToken');
+            sessionStorage.removeItem('userId');
+            sessionStorage.removeItem('userEmail');
+            sessionStorage.removeItem('userRole');
+        }
+
+        function showLoginState() {
+            document.getElementById('loginForm').style.display = 'block';
+            document.getElementById('loggedInSection').style.display = 'none';
+            document.getElementById('email').value = '';
+            document.getElementById('password').value = '';
+        }
+
+        function showLoggedInState() {
+            document.getElementById('loginForm').style.display = 'none';
+            document.getElementById('loggedInSection').style.display = 'block';
+        }
+
+        function showStatus(message, type) {
+            const statusDiv = document.getElementById('status');
+            statusDiv.textContent = message;
+            statusDiv.className = `status ${type}`;
+            
+            // Clear status after 5 seconds
+            setTimeout(() => {
+                statusDiv.textContent = '';
+                statusDiv.className = '';
+            }, 5000);
+        }
+
+        // Example of how to use the stored token for API calls
+        async function makeAuthenticatedRequest(url, options = {}) {
+            const token = sessionStorage.getItem('authToken');
+            
+            if (!token) {
+                showStatus('No authentication token found. Please login.', 'error');
+                return null;
+            }
+
+            const headers = {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json',
+                ...options.headers
+            };
+
+            try {
+                const response = await fetch(url, {
+                    ...options,
+                    headers
+                });
+
+                if (response.status === 401) {
+                    showStatus('Token expired or invalid. Please login again.', 'error');
+                    clearSessionStorage();
+                    showLoginState();
+                    return null;
+                }
+
+                return response;
+            } catch (error) {
+                showStatus(`Request failed: ${error.message}`, 'error');
+                return null;
+            }
+        }
+    </script>
+</body>
+</html>

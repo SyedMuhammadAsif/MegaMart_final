@@ -1,0 +1,158 @@
+<div class="container-fluid px-3 py-2">
+
+  <div *ngIf="isLoading" class="text-center">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+    <p class="mt-2">Loading Products...</p>
+  </div>
+
+  <div *ngIf="!isLoading">
+
+    <!-- Compact Hero Section -->
+    <section class="hero-section py-3 mb-3">
+      <div class="text-center">
+        <h1 class="display-6 fw-bold mb-2" style="color: var(--cts-blue); font-size: 50px;">Welcome to MegaMart</h1>
+        <p class="mb-3">Your one-stop destination for everything you need!</p>
+        <button class="btn hero-cta-btn" (click)="scrollToCategoryGrid()">Start Shopping</button>
+      </div>
+    </section>
+
+    <!-- Banner Carousel -->
+    <div id="carouselExampleIndicators" class="carousel slide mb-3" data-bs-ride="carousel" data-bs-interval="3000">
+      <div class="carousel-indicators">
+        @for(banner of bannerImages; track banner; let i = $index) {
+          <button type="button" data-bs-target="#carouselExampleIndicators" [attr.data-bs-slide-to]="i" [class.active]="i === 0" [attr.aria-current]="i === 0 ? 'true' : null" [attr.aria-label]="'Slide ' + (i + 1)"></button>
+        }
+      </div>
+      <div class="carousel-inner">
+        @for(banner of bannerImages; track banner; let i = $index; let first = $first) {
+          <div class="carousel-item banner-image" [class.active]="first">
+            <img [src]="banner" class="d-block w-100" alt="Banner Image" style="height: 400px; object-fit: cover;">
+          </div>
+        }
+      </div>
+      <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Previous</span>
+      </button>
+      <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Next</span>
+      </button>
+    </div>
+
+    <!-- Category Grid Section -->
+    <section #categoryGrid id="category-grid" class="category-grid-section py-3">
+      <div class="text-center mb-3">
+        <h2 class="section-title">Shop by Category</h2>
+        <p class="section-subtitle">Explore our wide range of product categories</p>
+      </div>
+      <div class="row g-2">
+        <div class="col-lg-2 col-md-3 col-sm-4 col-6 mb-2" *ngFor="let category of categories?.slice(0, 12); let i = index; trackBy: trackByCategory">
+          <div class="category-grid-card" (click)="navigateToCategory(category.slug)">
+            <div class="category-icon-wrapper">
+              <img 
+                [src]="getCategoryImage(i)" 
+                [alt]="category.name"
+                class="category-icon-image">
+            </div>
+            <h6 class="category-name">{{ category.name }}</h6>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Customer Testimonials Section -->
+    <section class="testimonials-section py-3">
+      <div class="text-center mb-3">
+        <h2 class="section-title">What Our Customers Say</h2>
+        <p class="section-subtitle">Real reviews from satisfied customers</p>
+      </div>
+      <div class="row g-2">
+        <div class="col-lg-4 col-md-6 col-sm-12 mb-2" *ngFor="let testimonial of testimonials; let i = index">
+          <div class="testimonial-card">
+            <div class="testimonial-header">
+              <div class="customer-avatar">
+                <img [src]="testimonial.avatar" [alt]="testimonial.name" class="avatar-image">
+              </div>
+              <div class="customer-info">
+                <h6 class="customer-name">{{ testimonial.name }}</h6>
+                <div class="star-rating">
+                  <span *ngFor="let star of getStars(testimonial.rating)" class="star">★</span>
+                </div>
+              </div>
+            </div>
+            <div class="testimonial-content">
+              <p class="testimonial-text">"{{ testimonial.review }}"</p>
+              <small class="testimonial-date">{{ testimonial.date }}</small>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+      <!-- trends-banners -->
+        <div class="container">
+        <div class="row">
+          <div class="col-md-4">
+            <img src="trend-banners/trend-banner-1.jpg" alt="" class="img-fluid rounded">
+          </div>
+          <div class="col-md-4">
+            <img src="trend-banners/trend-banner-2.jpg" alt="" class="img-fluid rounded">
+          </div>
+          <div class="col-md-4">
+            <img src="trend-banners/trend-banner-3.jpg" alt="" class="img-fluid rounded">
+          </div>
+        </div>
+      </div>
+
+    <!-- Product Categories with Carousels -->
+    <div *ngFor="let category of categoriesWithProducts; let i = index" class="category-section mb-4">
+
+      <div class="d-flex justify-content-between align-items-center mb-2 pl-3 pt-3">
+        <h2 class="category-title text-capitalize m-0">{{ category.name }}</h2>
+        <div class="carousel-controls">
+          <button class="carousel-control-btn prev-btn" type="button" [attr.data-bs-target]="'#carousel-' + category.slug" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+          </button>
+          <button class="carousel-control-btn next-btn" type="button" [attr.data-bs-target]="'#carousel-' + category.slug" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+          </button>
+        </div>
+      </div>
+
+      <div [id]="'carousel-' + category.slug" class="carousel slide" data-bs-ride="carousel">
+        <div class="carousel-inner">
+          <div *ngFor="let productChunk of category.chunkedProducts; let i = index" class="carousel-item" [class.active]="i === 0">
+            <div class="row g-2">
+              <div *ngFor="let product of productChunk" class="col-12 col-md-6 col-lg-3 px-3 pt-1">
+                <a [routerLink]="['/product', product.id]" class="card-link">
+                  <div class="card product-card">
+                    <img [src]="product.thumbnail" class="card-img-top product-image" [alt]="product.title"> 
+                    <div class="card-body d-flex flex-column">
+                      <p class="card-text text-muted mb-1 small">{{ product.brand }}</p>
+                      <h6 class="card-title single-line-header">{{ product.title }}</h6>
+                      <div class="bot-layout mt-auto">
+                        <div class="star-rating mb-1">
+                          <span class="text-warning">★</span> {{ product.rating }}
+                        </div>
+                        <p class="card-text description small mb-2">{{ product.description | slice:0:40 }}...</p>
+                        <div class="d-flex justify-content-between align-items-center">
+                          <p class="card-text fw-bold mb-0">${{ product.price }}</p>
+                          <span *ngIf="product.stock > 50" class="badge bg-success">In Stock</span>
+                          <span *ngIf="product.stock <= 50 && product.stock > 0" class="badge bg-warning text-dark">Low Stock</span>
+                          <span *ngIf="product.stock === 0" class="badge bg-danger">Out of Stock</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

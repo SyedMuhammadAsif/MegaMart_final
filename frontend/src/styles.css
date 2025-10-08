@@ -1,0 +1,56 @@
+/* You can add global styles to this file, and also import other style files */
+.theme-major-color {
+  background-color: #0078ad;
+}
+
+.theme-minor-color {
+  background-color: #0c5273;
+}
+
+.theme-accent-color {
+  background-color: #e6e6e6;
+}
+
+.theme-major-element-color {
+  color: #0078ad;
+}
+
+.theme-minor-element-color {
+  color: #0c5273;
+}
+
+.theme-accent-element-color {
+  color: #e6e6e6;
+}
+
+a {
+  cursor: pointer;
+  text-decoration: none;
+}
+
+
+:root {
+  --primary: #0078ad;
+  --primary-light: #0c5273;
+  --secondary: #64748b;
+  --background: #f8fafc;
+  --white: #ffffff;
+  --gray-50: #f9fafb;
+  --gray-100: #f3f4f6;
+  --gray-200: #e5e7eb;
+  --gray-500: #6b7280;
+  --gray-700: #374151;
+  --gray-900: #111827;
+  --success: #10b981;
+  --danger: #ef4444;
+  --warning: #f59e0b;
+  --cts-blue: #0078ad;
+
+  --prussian-blue: #003153;        
+  --prussian-blue-light: #004d7a; 
+  --prussian-blue-dark: #002142;  
+  --text-light: #ffffff;         
+  --text-muted: #6c757d;        
+  --border-light: #dee2e6;     
+  --shadow-light: rgba(0, 49, 83, 0.1); 
+}

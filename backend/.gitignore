@@ -1,0 +1,42 @@
+# Build artifacts
+/target/
+/build/
+
+# Maven Wrapper
+.mvn/wrapper/maven-wrapper.jar
+
+# Gradle Wrapper
+.gradle/
+!gradle-wrapper.jar
+!gradle-wrapper.properties
+/build/
+
+# IDE files
+.idea/
+.vscode/
+*.iml
+*.iws
+*.ipr
+.project
+.classpath
+.settings/
+
+# Log files
+*.log
+logs/
+
+# Environment variables and sensitive data
+.env
+application*.properties.example
+application*.yml.example
+# If you have specific credential files, add them here, e.g.:
+# credentials.properties
+
+# Operating System files
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*~
+*.bak
+*.swp

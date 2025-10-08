@@ -1,0 +1,89 @@
+<!-- Primary Navigation Bar -->
+<nav class="navbar navbar-expand-lg theme-major-color text-light">
+  <div class="container-fluid m-2">
+    <a class="navbar-brand text-light d-flex align-items-center font-weight-bold" routerLink="/">
+      <img 
+        src="megamart-logo.jpeg" 
+        width="40" 
+        height="40" 
+        class="rounded d-inline-block align-top mr-2" 
+        alt="MegaMart Logo"
+      >
+      MegaMart
+    </a>
+
+    <button 
+      class="navbar-toggler navbar-light" 
+      type="button" 
+      data-toggle="collapse" 
+      data-target="#navbarNav" 
+      aria-controls="navbarNav" 
+      aria-expanded="false" 
+      aria-label="Toggle navigation"
+    >
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse justify-content-center" id="navbarNav">
+      <div class="d-flex w-100 justify-content-center m-2">
+        <form class="form-inline" role="search" (ngSubmit)="onSearchSubmit($event)" >
+          <input class="form-control mr-2" type="search" placeholder="Explore" aria-label="Search" style="width: 70%;" [(ngModel)]="searchQuery" name="searchQuery" (keydown.enter)="onSearch()" >
+          <button class="btn btn-outline-light" type="submit">Search</button>
+        </form>
+      </div>
+
+      <ul class="navbar-nav ml-auto d-flex flex-row">
+        <li class="nav-item mx-2">
+          <a class="nav-link text-light" routerLink="/category">Category</a>
+        </li>
+
+        <li class="nav-item mx-2">
+          <a class="nav-link text-light cart-link" routerLink="/cart">Cart
+            <span *ngIf="isLoggedIn() && cartCount > 0" class="cart-badge">{{ cartCount }}</span>
+          </a>
+        </li>
+        <li class="nav-item mx-2">
+          <a class="nav-link text-light" routerLink="/orders">Orders</a>
+        </li>
+        <!-- Admin Login Dropdown -->
+        
+        <li class="nav-item mx-2">
+          <app-user-profile />
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<!-- Secondary Information Bar -->
+<nav class="navbar navbar-expand-lg theme-minor-color text-light">
+  <div class="container-fluid">
+    <ul class="navbar-nav mr-auto d-flex flex-row align-items-center">
+      <li class="nav-item mx-2">
+        <a class="nav-link text-light d-flex flex-row align-items-center" (click)="onAddressClick()" style="cursor: pointer;">
+          Address:
+          <div class="d-flex flex-column align-items-center ml-2">
+            <div class="font-weight-bold" style="font-size: 85%">{{ addressDisplay }}</div>
+            <div class="small">{{ pincodeDisplay }}</div>
+          </div>
+        </a>
+      </li>
+    </ul>
+
+    <ul class="navbar-nav ml-auto d-flex flex-row align-items-center">
+      <li class="nav-item mx-2">
+        <a class="nav-link text-light border rounded p-2" style="font-size: 75%;" routerLink="/delivery-policy">Delivery within 10 Minutes</a>
+      </li>
+      <li class="nav-item mx-2">
+        <a class="nav-link text-light d-flex flex-row align-items-center" href="#">
+          TollFree:
+          <div class="d-flex flex-column align-items-center ml-2">
+            <div class="font-weight-bold" style="font-size: 85%">+91 98765 43210</div>
+            <div class="small">24 x 7</div>
+          </div>
+        </a>
+      </li>
+    </ul>
+  </div>
+</nav>
+ 

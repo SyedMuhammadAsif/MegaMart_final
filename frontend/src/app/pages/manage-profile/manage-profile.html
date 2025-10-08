@@ -1,0 +1,496 @@
+<div class="container-fluid manage-profile-container">
+  <div class="row">
+    <!-- Sidebar Navigation -->
+    <div class="col-lg-3 col-md-4 sidebar">
+      <div class="sidebar-header">
+        <h4>Manage Profile</h4>
+      </div>
+      <nav class="sidebar-nav">
+        <ul class="nav-list">
+          <li>
+            <button 
+              class="nav-item" 
+              [class.active]="activeSection === 'account'"
+              (click)="setActiveSection('account')">
+              <i class="fas fa-user"></i>
+              Account Information
+            </button>
+          </li>
+          <li>
+            <button 
+              class="nav-item" 
+              [class.active]="activeSection === 'address'"
+              (click)="setActiveSection('address')">
+              <i class="fas fa-map-marker-alt"></i>
+              Addresses
+            </button>
+          </li>
+          <li>
+            <button 
+              class="nav-item" 
+              [class.active]="activeSection === 'payment'"
+              (click)="setActiveSection('payment')">
+              <i class="fas fa-credit-card"></i>
+              Payment Methods
+            </button>
+          </li>
+          <li>
+            <button 
+              class="nav-item" 
+              [class.active]="activeSection === 'security'"
+              (click)="setActiveSection('security')">
+              <i class="fas fa-shield-alt"></i>
+              Security
+            </button>
+          </li>
+          <li>
+            <button 
+              class="nav-item" 
+              [class.active]="activeSection === 'danger'"
+              (click)="setActiveSection('danger')">
+              <i class="fas fa-exclamation-triangle"></i>
+              Account Actions
+            </button>
+          </li>
+        </ul>
+      </nav>
+    </div>
+
+    <!-- Main Content -->
+    <div class="col-lg-9 col-md-8 main-content">
+      @if (loading) {
+        <div class="loading-state">
+          <div class="spinner-border" role="status">
+            <span class="visually-hidden">Loading...</span>
+          </div>
+          <p>Loading profile...</p>
+        </div>
+      } @else {
+        
+        <!-- Account Information Section -->
+        @if (activeSection === 'account') {
+          <div class="content-section">
+            <div class="section-header">
+              <h5>Account Information</h5>
+              <p class="text-muted">Update your personal details</p>
+            </div>
+            
+                          @if (!editingAccount) {
+                <div class="info-grid">
+                  <div class="info-item">
+                    <label>Full Name</label>
+                    <span>{{ user.name || 'Not provided' }}</span>
+                  </div>
+                  <div class="info-item">
+                    <label>Email</label>
+                    <span>{{ getLoggedInUserEmail() || 'Not provided' }}</span>
+                  </div>
+                  <div class="info-item">
+                    <label>Phone</label>
+                    <span>{{ user.phone || 'Not provided' }}</span>
+                  </div>
+                  <div class="info-item">
+                    <label>Date of Birth</label>
+                    <span>{{ user.dateOfBirth || 'Not provided' }}</span>
+                  </div>
+                  <div class="info-item">
+                    <label>Gender</label>
+                    <span>{{ user.gender || 'Not provided' }}</span>
+                  </div>
+                </div>
+                <button class="btn btn-outline-secondary btn-sm" (click)="startEditingAccount()">
+                  <i class="fas fa-edit me-1"></i>Edit
+                </button>
+              } @else {
+                <form [formGroup]="accountForm" (ngSubmit)="saveAccountInfo()" class="edit-form">
+                  <div class="form-row">
+                    <div class="form-group">
+                      <label for="name">Full Name *</label>
+                      <input type="text" class="form-control" id="name" formControlName="name">
+                      <small class="text-danger" *ngIf="accountForm.get('name')?.touched && accountForm.get('name')?.invalid">Name is required (min 3 chars)</small>
+                    </div>
+                    <div class="form-group">
+                      <label for="email">Email *</label>
+                      <input type="email" class="form-control" id="email" formControlName="email">
+                      <small class="text-danger" *ngIf="accountForm.get('email')?.touched && accountForm.get('email')?.invalid">Valid email required</small>
+                    </div>
+                  </div>
+                  <div class="form-row">
+                    <div class="form-group">
+                      <label for="phone">Phone</label>
+                      <input type="tel" class="form-control" id="phone" formControlName="phone">
+                      <small class="text-danger" *ngIf="accountForm.get('phone')?.touched && accountForm.get('phone')?.invalid">Phone must be 10 digits</small>
+                    </div>
+                    <div class="form-group">
+                      <label for="dateOfBirth">Date of Birth</label>
+                      <input type="date" class="form-control" id="dateOfBirth" formControlName="dateOfBirth">
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label for="gender">Gender</label>
+                    <select class="form-control" id="gender" formControlName="gender">
+                      <option value="">Select Gender</option>
+                      <option value="male">Male</option>
+                      <option value="female">Female</option>
+                      <option value="other">Other</option>
+                    </select>
+                  </div>
+                  <div class="form-actions">
+                    <button [disabled]="accountForm.invalid || accountForm.pristine" type="submit" class="btn btn-dark btn-sm">Save</button>
+                    <button type="button" class="btn btn-light btn-sm" (click)="cancelEditingAccount()">Cancel</button>
+                  </div>
+                </form>
+              }
+          </div>
+        }
+
+        <!-- Addresses Section -->
+        @if (activeSection === 'address') {
+          <div class="content-section">
+            <div class="section-header">
+              <h5>Addresses</h5>
+              <p class="text-muted">Manage your delivery addresses</p>
+              @if (!editingAddress && (!user.addresses || user.addresses.length < 3)) {
+                <button class="btn btn-outline-secondary btn-sm" (click)="startEditingAddress()">
+                  <i class="fas fa-plus me-1"></i>Add Address
+                </button>
+              }
+            </div>
+
+            @if (!editingAddress) {
+              @if (user.addresses && user.addresses.length > 0) {
+                <div class="items-grid">
+                  @for (address of user.addresses; track address.id) {
+                    <div class="item-card">
+                      <div class="item-content">
+                        <h6>{{ address.fullName }}</h6>
+                        <p class="address-text">
+                          {{ address.addressLine1 }}<br>
+                          @if (address.addressLine2) {
+                            {{ address.addressLine2 }}<br>
+                          }
+                          {{ address.city }}, {{ address.state }} {{ address.postalCode }}<br>
+                          {{ address.country }}<br>
+                          <small>Phone: {{ address.phone }}</small>
+                        </p>
+                      </div>
+                      <div class="item-actions">
+                        <button class="btn btn-light btn-sm" (click)="startEditingAddress(address)">Edit</button>
+                        <button class="btn btn-outline-danger btn-sm" (click)="removeAddress(address.id!)">Remove</button>
+                      </div>
+                    </div>
+                  }
+                </div>
+              } @else {
+                <div class="empty-state">
+                  <i class="fas fa-map-marker-alt fa-2x text-muted"></i>
+                  <p>No addresses added yet</p>
+                  <button class="btn btn-outline-secondary" (click)="startEditingAddress()">Add Your First Address</button>
+                </div>
+              }
+            } @else {
+              <form [formGroup]="addressForm" (ngSubmit)="saveAddress()" class="edit-form">
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="fullName">Full Name *</label>
+                    <input type="text" class="form-control" id="fullName" formControlName="fullName">
+                    <small class="text-danger" *ngIf="addressForm.get('fullName')?.touched && addressForm.get('fullName')?.invalid">
+                      <span *ngIf="addressForm.get('fullName')?.errors?.['required']">Full name is required</span>
+                      <span *ngIf="addressForm.get('fullName')?.errors?.['minlength']">Name must be at least 3 characters</span>
+                      <span *ngIf="addressForm.get('fullName')?.errors?.['pattern']">Name should contain only letters, spaces and dots</span>
+                    </small>
+                  </div>
+                  <div class="form-group">
+                    <label for="addressPhone">Phone *</label>
+                    <input type="tel" class="form-control" id="addressPhone" formControlName="phone">
+                    <small class="text-danger" *ngIf="addressForm.get('phone')?.touched && addressForm.get('phone')?.invalid">Phone must be 10 digits</small>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="addressLine1">Address Line 1 *</label>
+                  <input type="text" class="form-control" id="addressLine1" formControlName="addressLine1">
+                  <small class="text-danger" *ngIf="addressForm.get('addressLine1')?.touched && addressForm.get('addressLine1')?.invalid">
+                    <span *ngIf="addressForm.get('addressLine1')?.errors?.['required']">Address Line 1 is required</span>
+                    <span *ngIf="addressForm.get('addressLine1')?.errors?.['minlength']">Address must be at least 5 characters</span>
+                  </small>
+                </div>
+                <div class="form-group">
+                  <label for="addressLine2">Address Line 2</label>
+                  <input type="text" class="form-control" id="addressLine2" formControlName="addressLine2">
+                </div>
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="city">City *</label>
+                    <input type="text" class="form-control" id="city" formControlName="city">
+                    <small class="text-danger" *ngIf="addressForm.get('city')?.touched && addressForm.get('city')?.invalid">
+                      <span *ngIf="addressForm.get('city')?.errors?.['required']">City is required</span>
+                      <span *ngIf="addressForm.get('city')?.errors?.['pattern']">City should contain only letters and spaces</span>
+                    </small>
+                  </div>
+                  <div class="form-group">
+                    <label for="state">State *</label>
+                    <input type="text" class="form-control" id="state" formControlName="state">
+                    <small class="text-danger" *ngIf="addressForm.get('state')?.touched && addressForm.get('state')?.invalid">
+                      <span *ngIf="addressForm.get('state')?.errors?.['required']">State is required</span>
+                      <span *ngIf="addressForm.get('state')?.errors?.['pattern']">State should contain only letters and spaces</span>
+                    </small>
+                  </div>
+                </div>
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="postalCode">Postal Code *</label>
+                    <input type="text" class="form-control" id="postalCode" formControlName="postalCode">
+                    <small class="text-danger" *ngIf="addressForm.get('postalCode')?.touched && addressForm.get('postalCode')?.invalid">Pincode must be 6 digits</small>
+                  </div>
+                  <div class="form-group">
+                    <label for="country">Country *</label>
+                    <input type="text" class="form-control" id="country" formControlName="country">
+                    <small class="text-danger" *ngIf="addressForm.get('country')?.touched && addressForm.get('country')?.invalid">
+                      <span *ngIf="addressForm.get('country')?.errors?.['required']">Country is required</span>
+                      <span *ngIf="addressForm.get('country')?.errors?.['pattern']">Country should contain only letters and spaces</span>
+                    </small>
+                  </div>
+                </div>
+                <div class="form-actions">
+                  <button [disabled]="addressForm.invalid || addressForm.pristine" type="submit" class="btn btn-dark btn-sm">Save Address</button>
+                  <button type="button" class="btn btn-light btn-sm" (click)="cancelEditingAddress()">Cancel</button>
+                </div>
+              </form>
+            }
+          </div>
+        }
+
+        <!-- Payment Methods Section -->
+        @if (activeSection === 'payment') {
+          <div class="content-section">
+            <div class="section-header">
+              <h5>Payment Methods</h5>
+              <p class="text-muted">Manage your payment options</p>
+              @if (!editingPayment && (!user.paymentMethods || user.paymentMethods.length < 3)) {
+                <button class="btn btn-outline-secondary btn-sm" (click)="startEditingPayment()">
+                  <i class="fas fa-plus me-1"></i>Add Payment Method
+                </button>
+              }
+            </div>
+
+            @if (!editingPayment) {
+              @if (user.paymentMethods && user.paymentMethods.length > 0) {
+                <div class="items-grid">
+                  @for (payment of user.paymentMethods; track payment.id) {
+                    <div class="item-card">
+                      <div class="item-content">
+                        @if (payment.type === 'card') {
+                          <h6><i class="fas fa-credit-card me-1"></i>Credit/Debit Card</h6>
+                          <p>
+                            {{ getMaskedCardNumber(payment.cardNumber!) }}<br>
+                            {{ payment.cardholderName }}<br>
+                            <small>Expires: {{ payment.expiryMonth }}/{{ payment.expiryYear }}</small>
+                          </p>
+                        } @else if (payment.type === 'upi') {
+                          <h6><i class="fas fa-mobile-alt me-1"></i>UPI</h6>
+                          <p>{{ payment.upiId }}</p>
+                        }
+                      </div>
+                      <div class="item-actions">
+                        <button class="btn btn-light btn-sm" (click)="startEditingPayment(payment)">Edit</button>
+                        <button class="btn btn-outline-danger btn-sm" (click)="removePaymentMethod(payment.id!)">Remove</button>
+                      </div>
+                    </div>
+                  }
+                </div>
+              } @else {
+                <div class="empty-state">
+                  <i class="fas fa-credit-card fa-2x text-muted"></i>
+                  <p>No payment methods added yet</p>
+                  <button class="btn btn-outline-secondary" (click)="startEditingPayment()">Add Your First Payment Method</button>
+                </div>
+              }
+            } @else {
+              <form [formGroup]="paymentForm" (ngSubmit)="savePaymentMethod()" class="edit-form">
+                <div class="form-group">
+                  <label>Payment Type *</label>
+                  <div class="radio-group">
+                    <label class="radio-option">
+                      <input type="radio" value="card" formControlName="type" (change)="onPaymentTypeChange()">
+                      <i class="fas fa-credit-card"></i> Card
+                    </label>
+                    <label class="radio-option">
+                      <input type="radio" value="upi" formControlName="type" (change)="onPaymentTypeChange()">
+                      <i class="fas fa-mobile-alt"></i> UPI
+                    </label>
+                  </div>
+                  <small class="text-danger" *ngIf="paymentForm.get('type')?.touched && paymentForm.get('type')?.invalid">Please select a payment type</small>
+                </div>
+
+                @if (paymentForm.get('type')?.value === 'card') {
+                  <div class="form-group">
+                    <label for="cardNumber">Card Number *</label>
+                    <input type="text" class="form-control" id="cardNumber" 
+                           formControlName="cardNumber"
+                           placeholder="1234 5678 9012 3456" 
+                           (input)="onCardNumberInput($event)"
+                           maxlength="19">
+                    <small class="text-danger" *ngIf="paymentForm.get('cardNumber')?.touched && paymentForm.get('cardNumber')?.invalid">
+                      <span *ngIf="paymentForm.get('cardNumber')?.errors?.['required']">Card number is required</span>
+                      <span *ngIf="paymentForm.get('cardNumber')?.errors?.['pattern']">Card number must be 13-19 digits</span>
+                    </small>
+                  </div>
+                  <div class="form-group">
+                    <label for="cardholderName">Cardholder Name *</label>
+                    <input type="text" class="form-control" id="cardholderName" 
+                           formControlName="cardholderName">
+                    <small class="text-danger" *ngIf="paymentForm.get('cardholderName')?.touched && paymentForm.get('cardholderName')?.invalid">
+                      <span *ngIf="paymentForm.get('cardholderName')?.errors?.['required']">Cardholder name is required</span>
+                      <span *ngIf="paymentForm.get('cardholderName')?.errors?.['minlength']">Name must be at least 2 characters</span>
+                    </small>
+                  </div>
+                  <div class="form-row">
+                    <div class="form-group">
+                      <label for="expiryMonth">Month *</label>
+                      <select class="form-control" id="expiryMonth" formControlName="expiryMonth">
+                        <option value="">Month</option>
+                        @for (month of [1,2,3,4,5,6,7,8,9,10,11,12]; track month) {
+                          <option [value]="month.toString().padStart(2, '0')">
+                            {{ month.toString().padStart(2, '0') }}
+                          </option>
+                        }
+                      </select>
+                      <small class="text-danger" *ngIf="paymentForm.get('expiryMonth')?.touched && paymentForm.get('expiryMonth')?.invalid">Month is required</small>
+                    </div>
+                    <div class="form-group">
+                      <label for="expiryYear">Year *</label>
+                      <select class="form-control" id="expiryYear" formControlName="expiryYear">
+                        <option value="">Year</option>
+                        @for (year of getYearRange(); track year) {
+                          <option [value]="year.toString()">{{ year }}</option>
+                        }
+                      </select>
+                      <small class="text-danger" *ngIf="paymentForm.get('expiryYear')?.touched && paymentForm.get('expiryYear')?.invalid">Year is required</small>
+                    </div>
+                  </div>
+                } @else if (paymentForm.get('type')?.value === 'upi') {
+                  <div class="form-group">
+                    <label for="upiId">UPI ID *</label>
+                    <input type="text" class="form-control" id="upiId" 
+                           formControlName="upiId"
+                           placeholder="yourname@paytm">
+                    <small class="text-danger" *ngIf="paymentForm.get('upiId')?.touched && paymentForm.get('upiId')?.invalid">
+                      <span *ngIf="paymentForm.get('upiId')?.errors?.['required']">UPI ID is required</span>
+                      <span *ngIf="paymentForm.get('upiId')?.errors?.['pattern']">Invalid UPI ID format (e.g., user@paytm)</span>
+                    </small>
+                  </div>
+                }
+
+                <div class="form-actions">
+                  <button [disabled]="paymentForm.invalid" type="submit" class="btn btn-dark btn-sm">Save Payment Method</button>
+                  <button type="button" class="btn btn-light btn-sm" (click)="cancelEditingPayment()">Cancel</button>
+                </div>
+              </form>
+            }
+          </div>
+        }
+
+        <!-- Security Section -->
+        @if (activeSection === 'security') {
+          <div class="content-section">
+            <div class="section-header">
+              <h5>Security</h5>
+              <p class="text-muted">Manage your account security settings</p>
+            </div>
+            
+            <div class="security-item">
+              <div class="security-info">
+                <h6>Password</h6>
+                <p class="text-muted">Change your account password</p>
+              </div>
+              <button class="btn btn-outline-secondary btn-sm" (click)="openResetPasswordModal()">
+                Reset Password
+              </button>
+            </div>
+          </div>
+        }
+
+        <!-- Account Actions Section -->
+        @if (activeSection === 'danger') {
+          <div class="content-section">
+            <div class="section-header">
+              <h5>Account Actions</h5>
+              <p class="text-muted">Permanently delete your account</p>
+            </div>
+            
+            <div class="danger-item">
+              <div class="danger-info">
+                <h6 class="text-danger">Delete Account</h6>
+                <p class="text-muted">This action cannot be undone. All your data will be permanently removed.</p>
+              </div>
+              <button class="btn btn-outline-danger btn-sm" (click)="openDeleteAccountModal()">
+                Delete Account
+              </button>
+            </div>
+          </div>
+        }
+      }
+    </div>
+  </div>
+</div>
+
+<!-- Reset Password Modal -->
+@if (showResetPasswordModal) {
+  <div class="modal show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5);">
+    <div class="modal-dialog modal-sm">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h6 class="modal-title">Reset Password</h6>
+          <button type="button" class="btn-close" (click)="closeResetPasswordModal()"></button>
+        </div>
+        <form (ngSubmit)="resetPassword()">
+          <div class="modal-body">
+            <div class="form-group">
+              <label for="currentPassword">Current Password *</label>
+              <input type="password" class="form-control" id="currentPassword" 
+                     [(ngModel)]="passwordData.currentPassword" name="currentPassword" required>
+            </div>
+            <div class="form-group">
+              <label for="newPassword">New Password *</label>
+              <input type="password" class="form-control" id="newPassword" 
+                     [(ngModel)]="passwordData.newPassword" name="newPassword" required>
+            </div>
+            <div class="form-group">
+              <label for="confirmPassword">Confirm New Password *</label>
+              <input type="password" class="form-control" id="confirmPassword" 
+                     [(ngModel)]="passwordData.confirmPassword" name="confirmPassword" required>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-light btn-sm" (click)="closeResetPasswordModal()">Cancel</button>
+            <button type="submit" class="btn btn-dark btn-sm">Reset Password</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+}
+
+<!-- Delete Account Confirmation Modal -->
+@if (showDeleteAccountModal) {
+  <div class="modal show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5);">
+    <div class="modal-dialog modal-sm">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h6 class="modal-title text-danger">Delete Account</h6>
+          <button type="button" class="btn-close" (click)="closeDeleteAccountModal()"></button>
+        </div>
+        <div class="modal-body">
+          <div class="alert alert-danger">
+            <strong>Warning:</strong> This action cannot be undone!
+          </div>
+          <p class="small">Are you sure you want to permanently delete your account? This will remove all your data.</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-light btn-sm" (click)="closeDeleteAccountModal()">Cancel</button>
+          <button type="button" class="btn btn-danger btn-sm" (click)="deleteAccount()">Delete Account</button>
+        </div>
+      </div>
+    </div>
+  </div>
+} 
