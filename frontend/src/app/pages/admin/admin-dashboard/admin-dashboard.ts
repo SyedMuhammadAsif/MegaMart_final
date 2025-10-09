@@ -9,7 +9,7 @@ import { EnvVariables } from '../../../env/env-variables';
 import { BaseChartDirective, provideCharts, withDefaultRegisterables } from 'ng2-charts';
 import { ChartData, ChartOptions } from 'chart.js';
 import { firstValueFrom } from 'rxjs';
-import { AdminNav } from '../../../components/admin-nav/admin-nav';
+import { AdminNav } from '../admin-nav/admin-nav';
 
 @Component({
   selector: 'app-admin-dashboard',

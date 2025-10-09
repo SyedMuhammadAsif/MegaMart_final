@@ -5,7 +5,7 @@ import { Router } from '@angular/router';
 import { AdminAuthService } from '../../../services/admin-auth.service';
 import { EnvVariables } from '../../../env/env-variables';
 import { HttpClient } from '@angular/common/http';
-import { AdminNav } from '../../../components/admin-nav/admin-nav';
+import { AdminNav } from '../admin-nav/admin-nav';
 
 
 @Component({
