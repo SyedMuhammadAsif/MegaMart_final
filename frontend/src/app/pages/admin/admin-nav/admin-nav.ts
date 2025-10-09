@@ -26,12 +26,12 @@ constructor(public adminAuth: AdminAuthService) {}
     this.adminAuth.logout().subscribe({
       next: () => {
         this.adminAuth.clearCurrentAdmin();
-        window.location.href = '/admin/login';
+        window.location.href = '/admin';
       },
       error: () => {
         // Clear local state even if backend call fails
         this.adminAuth.clearCurrentAdmin();
-        window.location.href = '/admin/login';
+        window.location.href = '/admin';
       }
     });
   }
