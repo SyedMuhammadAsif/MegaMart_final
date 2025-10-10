@@ -31,8 +31,7 @@ export class AdminDashboardComponent implements OnInit {
     deliveredOrders: 0
   };
 
-  // Additional KPIs
-  orderedOrders = 0;
+
 
 
   // Monthly aggregates (last 6-12 months)
@@ -50,14 +49,7 @@ export class AdminDashboardComponent implements OnInit {
   salesChartData: ChartData<'line'> = { labels: [], datasets: [{ data: [], label: 'Sales', borderColor: '#1e40af', backgroundColor: 'rgba(30,64,175,0.1)', fill: false }] };
   profitChartData: ChartData<'line'> = { labels: [], datasets: [{ data: [], label: 'Profit', borderColor: '#10b981', backgroundColor: 'rgba(16,185,129,0.1)', fill: false }] };
 
-  // Charts - bar (order status)
-  barChartOptions: ChartOptions<'bar'> = {
-    responsive: true,
-    maintainAspectRatio: false,
-    plugins: { legend: { display: false } },
-    scales: { x: { grid: { display: false } }, y: { beginAtZero: true } }
-  };
-  statusBarData: ChartData<'bar'> = { labels: ['Processing', 'Shipped', 'Delivered', 'Cancelled'], datasets: [{ data: [0, 0, 0, 0], backgroundColor: ['#60a5fa', '#3b82f6', '#10b981', '#ef4444'] }] };
+
 
   // Charts - doughnut (stock availability)
   doughnutOptions: ChartOptions<'doughnut'> = { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } };
@@ -69,8 +61,7 @@ export class AdminDashboardComponent implements OnInit {
   // Loading state
   isLoading = true;
 
-  // Recent orders for quick view
-  recentOrders: any[] = [];
+
 
   // Low stock products
   lowStockProducts: any[] = [];
@@ -151,25 +142,7 @@ export class AdminDashboardComponent implements OnInit {
             return total + (order.total || 0);
           }, 0);
 
-          // Count orders by status
-          this.orderedOrders = orders.filter((order: any) => 
-            order.orderStatus === 'confirmed' || order.orderStatus === 'processing'
-          ).length;
 
-          const processing = orders.filter((o: any) => o.orderStatus === 'processing').length;
-          const shipped = orders.filter((o: any) => o.orderStatus === 'shipped').length;
-          const delivered = orders.filter((o: any) => o.orderStatus === 'delivered').length;
-          const cancelled = orders.filter((o: any) => o.orderStatus === 'cancelled').length;
-
-          this.stats.pendingOrders = orders.filter((order: any) => order.orderStatus === 'pending').length;
-          this.stats.shippedOrders = shipped;
-          this.stats.deliveredOrders = delivered;
-          this.cancelledOrders = cancelled;
-
-          this.statusBarData = {
-            labels: ['Processing', 'Shipped', 'Delivered', 'Cancelled'],
-            datasets: [{ data: [processing, shipped, delivered, cancelled], backgroundColor: ['#60a5fa', '#3b82f6', '#10b981', '#ef4444'] }]
-          };
 
           // Monthly aggregates (last 6 months)
           const byMonth: { [key: string]: { sales: number; profit: number; } } = {};
@@ -195,10 +168,7 @@ export class AdminDashboardComponent implements OnInit {
           this.salesChartData = { labels, datasets: [{ data: salesData, label: 'Sales', borderColor: '#1e40af', backgroundColor: 'rgba(30,64,175,0.1)', fill: false }] };
           this.profitChartData = { labels, datasets: [{ data: profitData, label: 'Profit', borderColor: '#10b981', backgroundColor: 'rgba(16,185,129,0.1)', fill: false }] };
 
-          // Get recent orders (last 5)
-          this.recentOrders = orders
-            .sort((a: any, b: any) => new Date(b.orderDate).getTime() - new Date(a.orderDate).getTime())
-            .slice(0, 5);
+
         }
       });
   }
@@ -238,26 +208,7 @@ export class AdminDashboardComponent implements OnInit {
     return date.toLocaleDateString();
   }
 
-  /**
-   * Get status badge class for orders
-   */
-  getStatusBadgeClass(status: string): string {
-    switch (status) {
-      case 'pending':
-      case 'confirmed':
-        return 'badge-warning';
-      case 'processing':
-        return 'badge-info';
-      case 'shipped':
-        return 'badge-primary';
-      case 'delivered':
-        return 'badge-success';
-      case 'cancelled':
-        return 'badge-danger';
-      default:
-        return 'badge-secondary';
-    }
-  }
+
 
   /**
    * Admin logout - clear session and redirect to home

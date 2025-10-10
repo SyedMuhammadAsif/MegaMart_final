@@ -21,7 +21,7 @@ import { AdminProductsComponent } from './pages/admin/admin-products/admin-produ
 import { AdminOrdersComponent } from './pages/admin/admin-orders/admin-orders';
 import { AdminCustomersComponent } from './pages/admin/admin-customers/admin-customers';
 import { AdminLoginComponent } from './pages/admin/admin-login/admin-login';
-import { AdminSettingsComponent } from './pages/admin/admin-settings/admin-settings';
+
 import { AboutUs } from './pages/about-us/about-us';
 import { FAQ } from './pages/faq/faq';
 import { TermsConditions } from './pages/terms-conditions/terms-conditions';
@@ -53,7 +53,7 @@ export const routes: Routes = [
   {path: 'admin/products', component: AdminProductsComponent, canActivate: [AdminGuard, RoleGuard], data: { permission: 'manage_products' }},
   {path: 'admin/orders', component: AdminOrdersComponent, canActivate: [AdminGuard, RoleGuard], data: { permission: 'manage_orders' }},
   {path: 'admin/customers', component: AdminCustomersComponent, canActivate: [AdminGuard, RoleGuard], data: { permission: 'manage_customers' }},
-  {path: 'admin/settings', component: AdminSettingsComponent, canActivate: [AdminGuard]},
+
 
      {path: 'about-us', component: AboutUs},
      {path: 'delivery-policy', component: DeliveryPolicy },

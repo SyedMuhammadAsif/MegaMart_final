@@ -142,16 +142,17 @@ export class AdminCustomersComponent implements OnInit {
    * Calculate customer statistics
    */
   calculateCustomerStats(customers: Customer[], orders: any[]): void {
-    // Set default values - order statistics removed
+    // Calculate order statistics for each customer
     customers.forEach(customer => {
-      customer.totalOrders = 0;
-      customer.totalSpent = 0;
+      const customerOrders = orders.filter(order => order.customerInfo?.email === customer.email);
+      customer.totalOrders = customerOrders.length;
+      customer.totalSpent = customerOrders.reduce((sum, order) => sum + (order.total || 0), 0);
     });
 
     // Calculate statistics
     this.customerStats.totalCustomers = customers.length;
-    this.customerStats.totalRevenue = customers.reduce((sum, customer) => sum + (customer.totalSpent || 0), 0);
-    this.customerStats.averageOrderValue = this.customerStats.totalRevenue / orders.length || 0;
+    this.customerStats.totalRevenue = orders.reduce((sum, order) => sum + (order.total || 0), 0);
+    this.customerStats.averageOrderValue = orders.length > 0 ? this.customerStats.totalRevenue / orders.length : 0;
     
     // New customers this month
     const thisMonth = new Date();

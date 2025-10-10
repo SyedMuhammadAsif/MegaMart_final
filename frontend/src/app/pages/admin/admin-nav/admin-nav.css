@@ -1,6 +1,5 @@
   .admin-nav {
       display: flex;
-      flex-wrap: wrap;
       justify-content: flex-end;
       align-items: center;
       gap: 0.5rem;
@@ -54,6 +53,3 @@
 
     .back-store { order: 99; }
 
-    @media (max-width: 1200px) {
-      .back-store { flex-basis: 100%; text-align: right; }
-    }
