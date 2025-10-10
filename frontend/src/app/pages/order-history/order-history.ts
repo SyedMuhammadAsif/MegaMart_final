@@ -7,7 +7,7 @@ import { HttpClient } from '@angular/common/http';
 import { Order } from '../../models/payment';
 import { AuthService } from '../../services/auth.service';
 import { EnvVariables } from '../../env/env-variables';
-import { DataPersistenceService } from '../../services/data-persistence.service';
+
 import { forkJoin, of, Observable, firstValueFrom } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 
@@ -33,7 +33,7 @@ export class OrderHistoryComponent implements OnInit {
     private router: Router,
     private http: HttpClient,
     private userAuth: AuthService,
-    private dataPersistence: DataPersistenceService
+
   ) {}
 
   ngOnInit(): void {

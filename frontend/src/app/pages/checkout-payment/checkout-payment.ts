@@ -11,7 +11,7 @@ import { Address } from '../../models/address';
 import { PaymentMethod, Order, OrderResponse, PaymentType } from '../../models/payment';
 import { Cart } from '../../models/cart-items';
 import { User, UserPaymentMethod } from '../../models/user';
-import { DataPersistenceService } from '../../services/data-persistence.service';
+
 import { OrderProcessingService } from '../../services/order-processing.service';
 import { EnvVariables } from '../../env/env-variables';
 
@@ -78,7 +78,7 @@ export class CheckoutPaymentComponent implements OnInit {
     private toastService: ToastService,
     private ngZone: NgZone,
     private fb: FormBuilder,
-    private dataPersistence: DataPersistenceService,
+
     private orderProcessingService: OrderProcessingService,
     private authService: AuthService
   ) {
