@@ -76,10 +76,5 @@ export class AdminLoginComponent implements OnInit {
     this.showPassword = !this.showPassword;
   }
 
-  getDemoCredentials(): void {
-    this.loginData = {
-      email: 'admin@megamart.com',
-      password: 'admin123'
-    };
-  }
+
 } 

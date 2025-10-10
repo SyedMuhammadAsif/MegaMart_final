@@ -34,24 +34,8 @@
               Payment Methods
             </button>
           </li>
-          <li>
-            <button 
-              class="nav-item" 
-              [class.active]="activeSection === 'security'"
-              (click)="setActiveSection('security')">
-              <i class="fas fa-shield-alt"></i>
-              Security
-            </button>
-          </li>
-          <li>
-            <button 
-              class="nav-item" 
-              [class.active]="activeSection === 'danger'"
-              (click)="setActiveSection('danger')">
-              <i class="fas fa-exclamation-triangle"></i>
-              Account Actions
-            </button>
-          </li>
+
+
         </ul>
       </nav>
     </div>
@@ -390,107 +374,14 @@
           </div>
         }
 
-        <!-- Security Section -->
-        @if (activeSection === 'security') {
-          <div class="content-section">
-            <div class="section-header">
-              <h5>Security</h5>
-              <p class="text-muted">Manage your account security settings</p>
-            </div>
-            
-            <div class="security-item">
-              <div class="security-info">
-                <h6>Password</h6>
-                <p class="text-muted">Change your account password</p>
-              </div>
-              <button class="btn btn-outline-secondary btn-sm" (click)="openResetPasswordModal()">
-                Reset Password
-              </button>
-            </div>
-          </div>
-        }
 
-        <!-- Account Actions Section -->
-        @if (activeSection === 'danger') {
-          <div class="content-section">
-            <div class="section-header">
-              <h5>Account Actions</h5>
-              <p class="text-muted">Permanently delete your account</p>
-            </div>
-            
-            <div class="danger-item">
-              <div class="danger-info">
-                <h6 class="text-danger">Delete Account</h6>
-                <p class="text-muted">This action cannot be undone. All your data will be permanently removed.</p>
-              </div>
-              <button class="btn btn-outline-danger btn-sm" (click)="openDeleteAccountModal()">
-                Delete Account
-              </button>
-            </div>
-          </div>
-        }
+
+
       }
     </div>
   </div>
 </div>
 
-<!-- Reset Password Modal -->
-@if (showResetPasswordModal) {
-  <div class="modal show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5);">
-    <div class="modal-dialog modal-sm">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h6 class="modal-title">Reset Password</h6>
-          <button type="button" class="btn-close" (click)="closeResetPasswordModal()"></button>
-        </div>
-        <form (ngSubmit)="resetPassword()">
-          <div class="modal-body">
-            <div class="form-group">
-              <label for="currentPassword">Current Password *</label>
-              <input type="password" class="form-control" id="currentPassword" 
-                     [(ngModel)]="passwordData.currentPassword" name="currentPassword" required>
-            </div>
-            <div class="form-group">
-              <label for="newPassword">New Password *</label>
-              <input type="password" class="form-control" id="newPassword" 
-                     [(ngModel)]="passwordData.newPassword" name="newPassword" required>
-            </div>
-            <div class="form-group">
-              <label for="confirmPassword">Confirm New Password *</label>
-              <input type="password" class="form-control" id="confirmPassword" 
-                     [(ngModel)]="passwordData.confirmPassword" name="confirmPassword" required>
-            </div>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-light btn-sm" (click)="closeResetPasswordModal()">Cancel</button>
-            <button type="submit" class="btn btn-dark btn-sm">Reset Password</button>
-          </div>
-        </form>
-      </div>
-    </div>
-  </div>
-}
 
-<!-- Delete Account Confirmation Modal -->
-@if (showDeleteAccountModal) {
-  <div class="modal show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5);">
-    <div class="modal-dialog modal-sm">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h6 class="modal-title text-danger">Delete Account</h6>
-          <button type="button" class="btn-close" (click)="closeDeleteAccountModal()"></button>
-        </div>
-        <div class="modal-body">
-          <div class="alert alert-danger">
-            <strong>Warning:</strong> This action cannot be undone!
-          </div>
-          <p class="small">Are you sure you want to permanently delete your account? This will remove all your data.</p>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-light btn-sm" (click)="closeDeleteAccountModal()">Cancel</button>
-          <button type="button" class="btn btn-danger btn-sm" (click)="deleteAccount()">Delete Account</button>
-        </div>
-      </div>
-    </div>
-  </div>
-} 
+
+ 

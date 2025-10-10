@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormGroup, FormControl, Validators } from '@angular/forms';
 import { ManageProfileService } from '../../services/manage-profile.service';
 import { ToastService } from '../../services/toast-service';
-import { User, UserAddress, UserPaymentMethod, PasswordResetRequest } from '../../models/user';
+import { User, UserAddress, UserPaymentMethod } from '../../models/user';
 import { AddressStateService } from '../../services/address-state.service';
 
 @Component({
@@ -31,20 +31,13 @@ export class ManageProfile implements OnInit {
   tempAddressData: UserAddress = {} as UserAddress;
   tempPaymentData: UserPaymentMethod = {} as UserPaymentMethod;
   
-  // Password reset data
-  passwordData: PasswordResetRequest = {
-    currentPassword: '',
-    newPassword: '',
-    confirmPassword: ''
-  };
+
   
   // Selected items for editing
   selectedAddress: UserAddress | null = null;
   selectedPayment: UserPaymentMethod | null = null;
   
-  // Confirmation modals
-  showDeleteAccountModal = false;
-  showResetPasswordModal = false;
+
 
   // Reactive form for address editing
   addressForm: FormGroup = new FormGroup({
@@ -410,73 +403,9 @@ export class ManageProfile implements OnInit {
     }
   }
 
-  // Security Methods
-  openResetPasswordModal(): void {
-    this.showResetPasswordModal = true;
-    this.passwordData = {
-      currentPassword: '',
-      newPassword: '',
-      confirmPassword: ''
-    };
-  }
 
-  resetPassword(): void {
-    if (this.passwordData.newPassword !== this.passwordData.confirmPassword) {
-      this.toastService.showError('New passwords do not match');
-      return;
-    }
 
-    this.loading = true;
-    this.manageProfileService.resetPassword(this.passwordData).subscribe({
-      next: (response) => {
-        this.showResetPasswordModal = false;
-        this.passwordData = {
-          currentPassword: '',
-          newPassword: '',
-          confirmPassword: ''
-        };
-        this.toastService.showSuccess('Password reset successfully');
-        this.loading = false;
-      },
-      error: (error) => {
-        this.toastService.showError('Error resetting password: ' + error.message);
-        this.loading = false;
-      }
-    });
-  }
 
-  closeResetPasswordModal(): void {
-    this.showResetPasswordModal = false;
-    this.passwordData = {
-      currentPassword: '',
-      newPassword: '',
-      confirmPassword: ''
-    };
-  }
-
-  // Account Actions
-  openDeleteAccountModal(): void {
-    this.showDeleteAccountModal = true;
-  }
-
-  deleteAccount(): void {
-    this.loading = true;
-    this.manageProfileService.deleteAccount().subscribe({
-      next: (response) => {
-        this.toastService.showSuccess('Account deleted successfully');
-        this.router.navigate(['/home']);
-        this.loading = false;
-      },
-      error: (error) => {
-        this.toastService.showError('Error deleting account: ' + error.message);
-        this.loading = false;
-      }
-    });
-  }
-
-  closeDeleteAccountModal(): void {
-    this.showDeleteAccountModal = false;
-  }
 
   // Utility methods
   getMaskedCardNumber(cardNumber: string): string {
@@ -505,7 +434,7 @@ export class ManageProfile implements OnInit {
   // Navigation methods
   setActiveSection(section: string): void {
     // Validate section is one of the allowed sections
-    const validSections = ['account', 'address', 'payment', 'security', 'danger'];
+    const validSections = ['account', 'address', 'payment'];
     if (validSections.includes(section)) {
       this.activeSection = section;
     } else {
@@ -517,7 +446,7 @@ export class ManageProfile implements OnInit {
     this.cancelEditingAccount();
     this.cancelEditingAddress();
     this.cancelEditingPayment();
-    this.closeResetPasswordModal();
-    this.closeDeleteAccountModal();
+
+
   }
 } 
