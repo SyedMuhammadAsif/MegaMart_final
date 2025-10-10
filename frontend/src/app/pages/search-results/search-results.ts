@@ -49,12 +49,10 @@ export class SearchResults implements OnInit {
     this.loading = true;
     this.noResults = false;
     
-    // OLD: Client-side search using productIds
-    // CHANGED: Use backend search API with larger page size for pagination
     this.productService.searchProducts({
       keyword: this.searchQuery,
       page: 0,
-      size: 50  // Proper page size for backend pagination
+      size: 50 
     }).subscribe({
       next: (response) => {
         this.searchResults = response.products || [];
@@ -72,7 +70,6 @@ export class SearchResults implements OnInit {
   }
 
   getDiscountedPrice(product: Product): number {
-    // CHANGED: Added null check for optional discountPercentage property
     if (product.discountPercentage && product.discountPercentage > 0) {
       return product.price * (1 - product.discountPercentage / 100);
     }
@@ -83,7 +80,6 @@ export class SearchResults implements OnInit {
     return price.toFixed(2);
   }
 
-  // ADDED: Helper method to safely check if product has discount
   hasDiscount(product: Product): boolean {
     return !!(product.discountPercentage && product.discountPercentage > 0);
   }

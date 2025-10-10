@@ -32,7 +32,6 @@ export class SimilarProducts implements OnChanges, AfterViewInit ,OnDestroy {
   };
    private resizeTimeout: any;
 
-  // Inject ChangeDetectorRef
   constructor(private productService: ProductDetailService, private cdr: ChangeDetectorRef) { } 
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -71,14 +70,12 @@ export class SimilarProducts implements OnChanges, AfterViewInit ,OnDestroy {
   initCarousel(): void {
     console.log('SimilarProducts initCarousel called. Element:', this.carouselElement?.nativeElement, 'Slides length:', this.slides.length);
 
-    // Dispose any existing carousel instance first
     if (this.carouselInstance) {
       this.carouselInstance.dispose();
       this.carouselInstance = null;
       console.log('SimilarProducts initCarousel: Disposed old carousel instance.');
     }
 
-    // Initialize only if element exists AND there are slides
     if (this.carouselElement && this.carouselElement.nativeElement && this.slides.length > 0) {
       try {
         

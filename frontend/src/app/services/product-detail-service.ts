@@ -19,8 +19,7 @@ export class ProductDetailService {
 
 
 getProductById(id: number): Observable<Product> { // Explicitly type return as Product
-    // OLD: return this.http.get<Product>(`${this.baseUrl}/${id}`).pipe(
-    // CHANGED: Handle Spring Boot response format {success, data, message}
+    
     return this.http.get<any>(`${this.baseUrl}/${id}`).pipe(
       map(response => response.data), // Extract data from Spring Boot response
       tap(product => console.log('Fetched product by ID:', product))
@@ -33,8 +32,7 @@ getProductById(id: number): Observable<Product> { // Explicitly type return as P
     if (this.allProductsCache) {
       return of(this.allProductsCache);
     } else {
-      // OLD: Limited pagination
-      // CHANGED: Fetch larger page size to get more products for similarity
+      
       return this.http.get<any>(`${this.baseUrl}?page=0&size=1000`).pipe(
         map(response => response.data?.content || response.data || []),
         tap(products => {

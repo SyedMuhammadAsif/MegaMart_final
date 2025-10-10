@@ -1,10 +1,8 @@
 import { Address } from './address';
 import { CartItem } from './cart-items';
 
-// Payment method types
 export type PaymentType = 'card' | 'upi' | 'cod';
 
-// Base payment method interface
 export interface PaymentMethod {
   type: PaymentType;
   cardNumber: string;
@@ -15,14 +13,12 @@ export interface PaymentMethod {
   upiId?: string;
 }
 
-// Customer information for orders
 export interface CustomerInfo {
   fullName: string;
   email: string;
   phone: string;
 }
 
-// Order tracking information
 export interface OrderTracking {
   status: 'pending' | 'confirmed' | 'processing' | 'shipped' | 'delivered' | 'cancelled';
   location?: string;
@@ -33,7 +29,6 @@ export interface OrderTracking {
   createdAt?: string;
 }
 
-// Order processing location
 export interface ProcessingLocation {
   id: string;
   name: string;
@@ -45,7 +40,6 @@ export interface ProcessingLocation {
   type: 'warehouse' | 'processing_center' | 'shipping_center';
 }
 
-// Order interface
 export interface Order {
   id?: string;
   orderNumber?: string;
@@ -70,16 +64,15 @@ export interface Order {
   cancellationReason?: string;
   cancelledAt?: string;
   cancelledBy?: 'customer' | 'admin';
-  visibleToAdmin?: boolean; // default true
-  visibleToCustomer?: boolean; // default true
+  visibleToAdmin?: boolean;
+  visibleToCustomer?: boolean;
   isArchived?: boolean;
   archivedAt?: string;
   archivedReason?: string;
   archivedBy?: 'admin' | 'customer' | 'system';
-  autoDeleteDate?: string; // 30 days from archive date
+  autoDeleteDate?: string;
 }
 
-// Order response interface
 export interface OrderResponse {
   success: boolean;
   order?: Order;

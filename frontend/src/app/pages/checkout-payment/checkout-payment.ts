@@ -51,7 +51,7 @@ export class CheckoutPaymentComponent implements OnInit {
 
   // Payment method being processed
   payment: PaymentMethod = {
-    type: 'card' as PaymentType, // Will be updated dynamically
+    type: 'card' as PaymentType,
     cardNumber: '',
     expiryMonth: '',
     expiryYear: '',
@@ -114,10 +114,8 @@ export class CheckoutPaymentComponent implements OnInit {
       }
     });
 
-    // Load shipping address from session storage
     const savedAddress = sessionStorage.getItem('checkoutAddress');
     if (!savedAddress) {
-      // If no address, redirect back to address step
       this.router.navigate(['/checkout/address']);
       return;
     }
@@ -125,11 +123,7 @@ export class CheckoutPaymentComponent implements OnInit {
     this.shippingAddress = JSON.parse(savedAddress);
   }
 
-  /**
-   * Load current user data to check existing payment methods
-   */
   private loadCurrentUser(): void {
-    // Simplified user loading - no saved payment methods for now
     this.currentUser = null;
     this.userPaymentMethods = [];
     this.selectedPaymentType = 'card';
@@ -138,27 +132,21 @@ export class CheckoutPaymentComponent implements OnInit {
     this.showCVVInput = false;
   }
 
-  /**
-   * Load selected payment method details into the form
-   */
   private loadSelectedPaymentMethod(): void {
     if (this.selectedPaymentMethodId && this.selectedPaymentMethodId !== 'new') {
       const selectedMethod = this.userPaymentMethods.find(method => method.id === this.selectedPaymentMethodId);
       if (selectedMethod) {
-        // Only load details that match the current payment type
         if (this.selectedPaymentType === 'card' && selectedMethod.type === 'card') {
-          // Load card details
           this.payment = {
             type: 'card',
             cardNumber: selectedMethod.cardNumber || '',
             expiryMonth: selectedMethod.expiryMonth || '',
             expiryYear: selectedMethod.expiryYear || '',
-            cvv: '', // Don't pre-fill CVV for security
+            cvv: '', 
             cardholderName: selectedMethod.cardholderName || '',
             upiId: ''
           };
           
-          // Update form with selected method details
           this.paymentForm.patchValue({
             cardholderName: this.payment.cardholderName,
             cardNumber: this.payment.cardNumber,
@@ -194,9 +182,6 @@ export class CheckoutPaymentComponent implements OnInit {
     }
   }
 
-  /**
-   * Handle payment method selection change
-   */
   onPaymentMethodChoiceChange(value: string): void {
     console.log('Payment method selection changed to:', value);
     console.log('Previous state - selectedPaymentMethodId:', this.selectedPaymentMethodId, 'useNewPaymentMethod:', this.useNewPaymentMethod);
@@ -234,9 +219,6 @@ export class CheckoutPaymentComponent implements OnInit {
     console.log('New state - selectedPaymentMethodId:', this.selectedPaymentMethodId, 'useNewPaymentMethod:', this.useNewPaymentMethod);
   }
 
-  /**
-   * Get the selected payment method object
-   */
   getSelectedPaymentMethod(): UserPaymentMethod | undefined {
     if (this.selectedPaymentMethodId && this.selectedPaymentMethodId !== 'new') {
       return this.userPaymentMethods.find(method => method.id === this.selectedPaymentMethodId);
@@ -244,9 +226,6 @@ export class CheckoutPaymentComponent implements OnInit {
     return undefined;
   }
 
-  /**
-   * Get the last 4 digits of the selected card
-   */
   getSelectedCardLastFour(): string {
     const method = this.getSelectedPaymentMethod();
     if (method && method.type === 'card' && method.cardNumber) {
@@ -255,21 +234,13 @@ export class CheckoutPaymentComponent implements OnInit {
     return '****';
   }
 
-  /**
-   * Handle CVV input for saved cards
-   */
   onSavedCardCVVInput(event: any): void {
     this.savedCardCVV = event.target.value;
   }
 
-  /**
-   * Check if the entered card details match any existing payment method
-   * @param cardDetails - The card details to validate
-   * @returns boolean - true if card details match existing ones, false otherwise
-   */
   private validateExistingCardDetails(cardDetails: any): boolean {
     if (!this.currentUser?.paymentMethods) {
-      return false; // No existing payment methods
+      return false;
     }
 
     const existingCard = this.currentUser.paymentMethods.find(method => 
@@ -283,63 +254,46 @@ export class CheckoutPaymentComponent implements OnInit {
     return !!existingCard;
   }
 
-  /**
-   * Save new payment method to user's account
-   * @param paymentMethod - The payment method to save
-   */
   private saveNewPaymentMethod(paymentMethod: UserPaymentMethod): void {
     if (!this.currentUser) {
       return;
     }
 
-    // Initialize paymentMethods array if it doesn't exist
     if (!this.currentUser.paymentMethods) {
       this.currentUser.paymentMethods = [];
     }
 
-    // Add unique ID and timestamp to the payment method
     const newPaymentMethod: UserPaymentMethod = {
       ...paymentMethod,
       id: Date.now().toString(),
       isDefault: this.currentUser.paymentMethods.length === 0 // First payment method is default
     };
 
-    // Add to user's payment methods
     this.currentUser.paymentMethods.push(newPaymentMethod);
 
-    // Payment method saving disabled for now
     console.log('Payment method saving disabled');
   }
 
-  // Simple form submission - easy to understand!
   onSubmit(): void {
-    // Validate form based on payment type
     if (this.selectedPaymentType === 'cod') {
-      // Cash on delivery - no validation needed
       this.processPaymentMicroservice();
       return;
     }
 
-    // For card/UPI payments, check if using existing method or new one
     if (this.selectedPaymentType === 'card' || this.selectedPaymentType === 'upi') {
       if (this.useNewPaymentMethod || this.userPaymentMethods.length === 0) {
-        // Using new payment method - validate form
         if (this.paymentForm.invalid) {
           this.markFormGroupTouched(this.paymentForm);
           return;
         }
 
-        // Update payment object with form values
         this.syncPaymentObject();
 
-        // Validate payment form before proceeding
         if (!this.validatePaymentForm()) {
-          // Show validation errors
           this.toastService.showError('Please fix the validation errors');
           return;
         }
 
-        // Validate specific payment type requirements
         if (this.selectedPaymentType === 'card') {
           const cvvValue = this.paymentForm.get('cvv')?.value || '';
           if (!this.paymentForm.get('cardholderName')?.value ||
@@ -362,13 +316,11 @@ export class CheckoutPaymentComponent implements OnInit {
         }
 
       } else {
-        // Using existing payment method - validate selection
         if (!this.selectedPaymentMethodId || this.selectedPaymentMethodId === 'new') {
           this.toastService.showError('Please select a payment method');
           return;
         }
 
-        // Get the selected payment method details
         const selectedMethod = this.userPaymentMethods.find(method => method.id === this.selectedPaymentMethodId);
         if (!selectedMethod) {
           this.toastService.showError('Selected payment method not found');
@@ -381,12 +333,11 @@ export class CheckoutPaymentComponent implements OnInit {
           cardNumber: selectedMethod.cardNumber || '',
           expiryMonth: selectedMethod.expiryMonth || '',
           expiryYear: selectedMethod.expiryYear || '',
-          cvv: '', // CVV is not stored for security
+          cvv: '', 
           cardholderName: selectedMethod.cardholderName || '',
           upiId: selectedMethod.upiId || ''
         };
 
-        // For card payments, we still need CVV from user
         if (this.selectedPaymentType === 'card') {
           const cvv = this.savedCardCVV.replace(/\D/g, '').substring(0, 3);
           if (!cvv || cvv.length !== 3) {
@@ -398,7 +349,6 @@ export class CheckoutPaymentComponent implements OnInit {
       }
     }
 
-    // Use microservice integration for order processing
     this.processPaymentMicroservice();
   }
 
@@ -406,10 +356,8 @@ export class CheckoutPaymentComponent implements OnInit {
   isValidUPI(upiId: string): boolean {
     if (!upiId) return false;
     
-    // Convert to lowercase for checking
     const lowerUpiId = upiId.toLowerCase();
     
-    // Check if it ends with any of the valid UPI providers
     return lowerUpiId.endsWith('@gpay') || 
            lowerUpiId.endsWith('@phonepe') || 
            lowerUpiId.endsWith('@paytm');
@@ -417,9 +365,6 @@ export class CheckoutPaymentComponent implements OnInit {
 
 
 
-  /**
-   * Process payment using microservices
-   */
   private processPaymentMicroservice(): void {
     this.isProcessing = true;
     this.isOverlayVisible = true;
@@ -432,13 +377,11 @@ export class CheckoutPaymentComponent implements OnInit {
     const currentUser = this.authService.getCurrentUser();
     console.log('Current user from AuthService:', currentUser);
     
-    // Get user-admin service user ID by email
     this.http.get<any[]>(`${EnvVariables.userServiceUrl}/users`).toPromise()
       .then(users => {
         const matchedUser = users?.find(u => u.email === currentUser?.email);
         const userId = matchedUser?.id?.toString() || '1';
         
-        // Cache the user-admin service user ID for cart service
         if (currentUser?.email && matchedUser?.id) {
           sessionStorage.setItem(`userAdminId_${currentUser.email}`, matchedUser.id.toString());
         }
@@ -447,8 +390,6 @@ export class CheckoutPaymentComponent implements OnInit {
         console.log('Matched user-admin service user:', matchedUser);
         console.log('Using user-admin service userId for order:', userId);
         
-        // Create order with user-admin service user ID
-    
     const orderData = {
       address: {
         fullName: this.shippingAddress!.fullName,
@@ -507,12 +448,9 @@ export class CheckoutPaymentComponent implements OnInit {
 
 
 
-  /**
-   * Save payment method if it's new and user is logged in
-   */
   private savePaymentMethodIfNew(): void {
     if (!this.currentUser) {
-      return; // User not logged in, skip saving
+      return; 
     }
 
     if (this.selectedPaymentType === 'card') {
@@ -552,7 +490,6 @@ export class CheckoutPaymentComponent implements OnInit {
         this.saveNewPaymentMethod(newUPIMethod);
       }
     }
-    // COD doesn't need to be saved as it's not a reusable payment method
   }
 
 
@@ -563,37 +500,27 @@ export class CheckoutPaymentComponent implements OnInit {
 
 
 
-  /**
-   * Handle payment type change
-   */
   onPaymentTypeChange(type: PaymentType): void {
     console.log('Payment type changed to:', type);
    
     
     this.selectedPaymentType = type;
     
-    // Clear CVV when switching types
     this.savedCardCVV = '';
     
-    // Reset form when switching payment types
     this.paymentForm.reset();
     
-    // Check if the currently selected payment method matches the new payment type
     if (this.selectedPaymentMethodId && this.selectedPaymentMethodId !== 'new') {
       const selectedMethod = this.userPaymentMethods.find(method => method.id === this.selectedPaymentMethodId);
       
       if (selectedMethod && selectedMethod.type !== type) {
-        // The selected method doesn't match the new payment type
-        // Check if there's a saved method of the new type
         const matchingMethod = this.userPaymentMethods.find(method => method.type === type);
         
         if (matchingMethod) {
-          // Switch to the matching method of the new type
           this.selectedPaymentMethodId = matchingMethod.id || '';
           this.useNewPaymentMethod = false;
           console.log('Switched to matching payment method:', matchingMethod.id);
         } else {
-          // No saved method of the new type, switch to "Add New"
           this.selectedPaymentMethodId = 'new';
           this.useNewPaymentMethod = true;
           console.log('No matching saved method, switched to Add New');
@@ -601,18 +528,15 @@ export class CheckoutPaymentComponent implements OnInit {
       }
     }
     
-    // Update CVV input visibility - only show for cards
     if (type === 'card' && !this.useNewPaymentMethod && this.selectedPaymentMethodId && this.selectedPaymentMethodId !== 'new') {
       this.showCVVInput = true;
     } else {
       this.showCVVInput = false;
     }
     
-    // Update payment object and clear irrelevant fields based on type
     this.payment.type = type;
     
     if (type === 'upi') {
-      // Clear all card-related fields for UPI
       this.payment.cardNumber = '';
       this.payment.expiryMonth = '';
       this.payment.expiryYear = '';
@@ -620,7 +544,6 @@ export class CheckoutPaymentComponent implements OnInit {
       this.payment.cardholderName = '';
       this.payment.upiId = '';
       
-      // If using existing UPI method, load only UPI details
       if (!this.useNewPaymentMethod && this.selectedPaymentMethodId && this.selectedPaymentMethodId !== 'new') {
         const selectedMethod = this.userPaymentMethods.find(method => method.id === this.selectedPaymentMethodId);
         if (selectedMethod && selectedMethod.type === 'upi') {
@@ -631,7 +554,6 @@ export class CheckoutPaymentComponent implements OnInit {
       // Clear UPI field for cards
       this.payment.upiId = '';
       
-      // If using existing card method, load card details
       if (!this.useNewPaymentMethod && this.selectedPaymentMethodId && this.selectedPaymentMethodId !== 'new') {
         this.loadSelectedPaymentMethod();
       }
@@ -643,12 +565,10 @@ export class CheckoutPaymentComponent implements OnInit {
     
   }
 
-  // Angular-way navigation to order tracking
   private navigateToOrderTracking(orderNumber: string): void {
             console.log('Starting Angular navigation to order tracking');
     
     this.ngZone.run(() => {
-      // Method 1: Try navigateByUrl with explicit options
       this.router.navigateByUrl(`/order-tracking/${orderNumber}`, {
         skipLocationChange: false,
         replaceUrl: false
@@ -658,12 +578,10 @@ export class CheckoutPaymentComponent implements OnInit {
           return Promise.resolve(true);
         } else {
           console.log('navigateByUrl returned false, trying navigate method');
-          // Method 2: Fallback to navigate with array
           return this.router.navigate(['/order-tracking', orderNumber]);
         }
       }).catch((error) => {
         console.error('navigateByUrl failed:', error);
-        // Method 3: Final fallback
         this.router.navigate(['/order-tracking', orderNumber]).then((success) => {
           console.log('🔄 Fallback navigation result:', success);
         });
@@ -681,7 +599,7 @@ export class CheckoutPaymentComponent implements OnInit {
   // Simple CVV formatting  
   formatCVV(event: any): void {
     let value = event.target.value.replace(/\D/g, '');
-    value = value.substring(0, 4); // Max 4 digits
+    value = value.substring(0, 4); 
     this.paymentForm.patchValue({ cvv: value });
   }
 
@@ -693,7 +611,6 @@ export class CheckoutPaymentComponent implements OnInit {
     return `$${price.toFixed(2)}`;
   }
 
-  // Helper to mark all form controls as touched
   private markFormGroupTouched(formGroup: any) {
     Object.values(formGroup.controls).forEach((control: any) => {
       control.markAsTouched();
@@ -703,13 +620,11 @@ export class CheckoutPaymentComponent implements OnInit {
     });
   }
 
-  // Validation methods
   private validatePaymentForm(): boolean {
     this.clearFormErrors();
     let isValid = true;
 
     if (this.selectedPaymentType === 'card') {
-      // Card validation
       if (!this.payment.cardholderName || this.payment.cardholderName.trim().length < 2) {
         this.formErrors['cardholderName'] = 'Cardholder name must be at least 2 characters';
         isValid = false;
@@ -744,7 +659,6 @@ export class CheckoutPaymentComponent implements OnInit {
       }
     }
 
-    // Validate saved card CVV if using saved method
     if (!this.useNewPaymentMethod && this.selectedPaymentType === 'card') {
       if (!this.savedCardCVV || !this.validateCVV(this.savedCardCVV)) {
         this.formErrors['savedCardCVV'] = 'Please enter a valid CVV';
@@ -760,17 +674,14 @@ export class CheckoutPaymentComponent implements OnInit {
     
     console.log('Validating card number:', cardNumber);
     
-    // Remove spaces and dashes
     const cleanNumber = cardNumber.replace(/\s+/g, '').replace(/-/g, '');
     console.log('Clean card number:', cleanNumber);
     
-    // Check if exactly 16 digits
     if (cleanNumber.length !== 16) {
       console.log('Card number must be exactly 16 digits, got:', cleanNumber.length);
       return false;
     }
 
-    // Check if all characters are digits
     if (!/^\d+$/.test(cleanNumber)) {
       console.log('Card number contains non-digits');
       return false;
@@ -800,31 +711,25 @@ export class CheckoutPaymentComponent implements OnInit {
   }
 
   private validateCVV(cvv: string): boolean {
-    // CVV should be 3-4 digits
     return /^[0-9]{3,4}$/.test(cvv);
   }
 
   private validateUPI(upiId: string): boolean {
-    // UPI format: username@bank or username@upi
     return /^[a-zA-Z0-9._-]+@[a-zA-Z]{3,}$/.test(upiId);
   }
 
-  // Check if field has error
   hasError(fieldName: string): boolean {
     return !!this.formErrors[fieldName];
   }
 
-  // Get error message for field
   getErrorMessage(fieldName: string): string {
     return this.formErrors[fieldName] || '';
   }
 
-  // Clear form errors
   private clearFormErrors(): void {
     this.formErrors = {};
   }
 
-  // Sync form values with payment object
   private syncPaymentObject(): void {
     if (this.useNewPaymentMethod) {
       this.payment = {

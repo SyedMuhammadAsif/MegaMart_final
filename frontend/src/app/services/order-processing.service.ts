@@ -46,10 +46,7 @@ export class OrderProcessingService {
     private http: HttpClient,
     private adminAuth: AdminAuthService
   ) {}
-
-  /**
-   * Create order from cart (microservice integration)
-   */
+  
   createOrderFromCart(userId: string, orderData: CreateOrderFromCartRequest): Observable<any> {
     const encodedUserId = encodeURIComponent(userId);
     const url = `${this.ORDER_SERVICE_URL}/from-cart/${encodedUserId}`;
@@ -57,65 +54,38 @@ export class OrderProcessingService {
     return this.http.post(url, orderData);
   }
 
-  /**
-   * Get all orders (microservice)
-   */
   getAllOrders(page: number = 0, size: number = 10): Observable<any> {
     return this.http.get(`${this.ORDER_SERVICE_URL}?page=${page}&size=${size}`);
   }
 
-  /**
-   * Get user orders (microservice)
-   */
   getUserOrders(userId: string, page: number = 0, size: number = 10): Observable<any> {
     return this.http.get(`${this.ORDER_SERVICE_URL}/user/${userId}?page=${page}&size=${size}`);
   }
 
-  /**
-   * Get order by ID (microservice)
-   */
   getOrderById(orderId: number): Observable<any> {
     return this.http.get(`${this.ORDER_SERVICE_URL}/${orderId}`);
   }
 
-  /**
-   * Update order status (microservice)
-   */
   updateOrderStatusMicroservice(orderId: number, status: string): Observable<any> {
     return this.http.put(`${this.ORDER_SERVICE_URL}/${orderId}/status?status=${status}`, {});
   }
 
-  /**
-   * Cancel order (microservice)
-   */
   cancelOrder(orderId: number): Observable<any> {
     return this.http.put(`${this.ORDER_SERVICE_URL}/${orderId}/cancel`, {});
   }
 
-  /**
-   * Get order tracking (microservice)
-   */
   getOrderTrackingMicroservice(orderId: number): Observable<any> {
     return this.http.get(`${this.ORDER_SERVICE_URL}/${orderId}/tracking`);
   }
 
-  /**
-   * Process payment (microservice)
-   */
   processPayment(paymentData: any): Observable<any> {
     return this.http.post(`${this.PAYMENT_SERVICE_URL}/process`, paymentData);
   }
 
-  /**
-   * Get all processing locations from database
-   */
   getProcessingLocations(): Observable<ProcessingLocation[]> {
     return this.http.get<ProcessingLocation[]>(`${EnvVariables.orderServiceUrl}/processing-locations`);
   }
 
-  /**
-   * Update order status with location tracking
-   */
   updateOrderStatus(
     orderId: string, 
     newStatus: Order['orderStatus'], 
@@ -153,9 +123,6 @@ export class OrderProcessingService {
     });
   }
 
-  /**
-   * Helper method to update order with location
-   */
   private updateOrderWithLocation(
     order: Order,
     newStatus: Order['orderStatus'],
@@ -203,9 +170,6 @@ export class OrderProcessingService {
     });
   }
 
-  /**
-   * Get status description based on status and location
-   */
   private getStatusDescription(status: Order['orderStatus'], location?: ProcessingLocation): string {
     const statusDescriptions: { [key: string]: string } = {
       'pending': 'Order received and pending confirmation',
@@ -223,9 +187,6 @@ export class OrderProcessingService {
     return statusDescriptions[status] || 'Status updated';
   }
 
-  /**
-   * Get order tracking history
-   */
   getOrderTracking(orderId: string): Observable<OrderTracking[]> {
     return new Observable(observer => {
       this.http.get<Order>(`${this.ORDER_SERVICE_URL}/${orderId}`).subscribe({
@@ -241,9 +202,6 @@ export class OrderProcessingService {
     });
   }
 
-  /**
-   * Add processing notes to order
-   */
   addProcessingNotes(orderId: string, notes: string): Observable<Order> {
     const currentAdmin = this.adminAuth.getCurrentAdmin();
     const timestamp = new Date().toISOString();
@@ -279,18 +237,12 @@ export class OrderProcessingService {
     });
   }
 
-  /**
-   * Get orders by status
-   */
   getOrdersByStatus(status: Order['orderStatus']): Observable<Order[]> {
     return this.http.get<any>(`${this.ORDER_SERVICE_URL}?page=0&size=1000`).pipe(
       map(response => (response.content || []).filter((order: any) => order.orderStatus === status))
     );
   }
 
-  /**
-   * Get orders that need attention (pending, processing)
-   */
   getOrdersNeedingAttention(): Observable<Order[]> {
     return this.http.get<any>(`${this.ORDER_SERVICE_URL}?page=0&size=1000`).pipe(
       map(response => (response.content || []).filter((order: any) => 
@@ -299,9 +251,6 @@ export class OrderProcessingService {
     );
   }
 
-  /**
-   * Get order statistics
-   */
   getOrderStatistics(): Observable<{
     total: number;
     pending: number;

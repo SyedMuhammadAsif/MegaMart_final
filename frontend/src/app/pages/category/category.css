@@ -1,8 +1,3 @@
-/* ================================
-   CATEGORY OVERLAY STYLES
-   ================================ */
-
-/* Category overlay background - Semi-transparent backdrop */
 .category-overlay-background {
   top: 0;
   left: 0;
@@ -13,7 +8,6 @@
   backdrop-filter: blur(2px);
 }
 
-/* Categories grid overlay - Centered modal-like container */
 .categories-grid-overlay {
   top: 50%;
   left: 50%;
@@ -31,7 +25,6 @@
   flex-direction: column;
 }
 
-/* Modal fade in animation */
 @keyframes modalFadeIn {
   from {
     opacity: 0;
@@ -43,20 +36,17 @@
   }
 }
 
-/* Overlay logo - Branding within overlay */
 .overlay-logo {
   height: 40px;
   width: auto;
 }
 
-/* Overlay company name - Brand text in overlay */
 .overlay-company-name {
   color: var(--primary);
   font-size: 1.4rem;
   font-weight: 600;
 }
 
-/* Overlay close button - Exit overlay action */
 .overlay-close-btn {
   font-size: 1.3rem;
   color: var(--primary);
@@ -68,13 +58,11 @@
   border: none;
 }
 
-/* Overlay close button hover effect */
 .overlay-close-btn:hover {
   background-color: rgba(0, 120, 173, 0.25);
   transform: scale(1.1);
 }
 
-/* Grid section title - Category browser heading */
 .grid-section-title {
   color: var(--primary);
   font-weight: 600;
@@ -84,14 +72,12 @@
   border-bottom: 2px solid var(--prussian-blue-light);
 }
 
-/* Categories grid section - Scrollable container */
 .categories-grid-section {
   flex: 1;
   overflow-y: auto;
   min-height: 0;
 }
 
-/* Categories grid - Auto-sizing 4 columns layout */
 .categories-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -100,7 +86,6 @@
   
 }
 
-/* Individual category card - Clickable category entries */
 .category-card {
   background-color: rgba(0, 49, 83, 0.05);
   border: 2px solid var(--prussian-blue-light);
@@ -117,7 +102,6 @@
    
 }
 
-/* Category card hover effect */
 .category-card:hover {
   background-color: rgba(0, 120, 173, 0.1);
   border-color: var(--primary);
@@ -125,13 +109,11 @@
   box-shadow: 0 4px 12px rgba(0, 120, 173, 0.2);
 }
 
-/* Category card content */
 .category-card-content {
   width: 100%;
   
 }
 
-/* Category name - Category text styling */
 .category-name {
   color: var(--primary);
   font-weight: 500;
@@ -139,11 +121,6 @@
   line-height: 1.3;
 }
 
-/* ================================
-   RESPONSIVE BREAKPOINTS
-   ================================ */
-
-/* Tablet adjustments */
 @media (max-width: 991.98px) {
   .categories-grid-overlay {
     width: 90%;
@@ -164,7 +141,6 @@
   }
 }
 
-/* Mobile adjustments */
 @media (max-width: 575.98px) {
   .categories-grid-overlay {
     width: 95%;
@@ -195,23 +171,16 @@
   }
 }
 
-/* ================================
-   ACCESSIBILITY IMPROVEMENTS
-   ================================ */
-
-/* Focus indicators for keyboard navigation */
 .category-card:focus,
 .overlay-close-btn:focus {
   outline: 2px solid var(--primary);
   outline-offset: 2px;
 }
 
-/* Ensure sufficient color contrast */
 .category-card:focus {
   background-color: rgba(0, 120, 173, 0.15);
 }
 
-/* Prevent body scroll when overlay is open */
 body.overlay-open {
  overflow-y: auto;
 }

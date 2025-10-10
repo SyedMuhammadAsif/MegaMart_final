@@ -20,8 +20,6 @@ export interface Product {
   }[];
   images?: string[];
   thumbnail?: string;
-  
-  // Optional fields for backward compatibility
   weight?: number;
   dimensions?: {
     width: number;

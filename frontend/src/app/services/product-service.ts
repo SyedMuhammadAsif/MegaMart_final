@@ -3,9 +3,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
 import { EnvVariables } from '../env/env-variables';
-// ADDED: Import map and tap operators
 
-// Interface for the API response when fetching products by category
 export interface ProductApiResponse {
   products: any[];
   total?: number;
@@ -47,13 +45,7 @@ export class ProductService {
 "https://cdn.dummyjson.com/product-images/womens-watches/iwc-ingenieur-automatic-steel/thumbnail.webp"
 ];
 
-
-
-
-// *******************************************************************************
-
-
-
+  
   constructor(private http:HttpClient){}
 
   private baseUrl = `${EnvVariables.productServiceUrl}`;
@@ -67,7 +59,6 @@ export class ProductService {
     this.searchResultsSource.next(productIds);
   }
 
-  // ADDED: Backend search functionality
   searchProducts(params: {
     keyword?: string;
     category?: string;
@@ -99,7 +90,6 @@ export class ProductService {
     );
   }
 
-  // ADDED: Get all brands from backend
   getBrands(): Observable<string[]> {
     return this.http.get<any>(`${this.baseUrl}/brands`).pipe(
       map(response => response.data || [])
@@ -116,8 +106,6 @@ export class ProductService {
   // Categories from local products, shaped as { name, slug }
 
 getCategories(): Observable<{ name: string; slug: string; }[]> {
-  // OLD: Wrong field mapping
-  // CHANGED: Use correct backend Category entity fields (name, slug)
   return this.http.get<any>(`${this.baseUrl}/categories`).pipe(
     map(response => {
       console.log('Backend categories response:', response); // DEBUG
@@ -138,8 +126,6 @@ getCategories(): Observable<{ name: string; slug: string; }[]> {
 
   // Products list shaped to { products } to match existing consumers
   getProducts(page: number = 0, size: number = 1000, sortBy: string = 'id', sortDirection: string = 'asc'): Observable<ProductApiResponse> {
-    // OLD: Limited to default pagination
-    // CHANGED: Increased default size to handle backend pagination properly
     const params = `page=${page}&size=${size}&sortBy=${sortBy}&sortDirection=${sortDirection}`;
     return this.http.get<any>(`${this.baseUrl}/products?${params}`).pipe(
       map(response => ({ 
@@ -151,7 +137,6 @@ getCategories(): Observable<{ name: string; slug: string; }[]> {
 
   // Get products by category slug, shaped to { products }
   getProductsByCategory(categorySlug: string, page: number = 0, size: number = 10): Observable<ProductApiResponse> {
-    // CHANGED: Proper backend pagination - each page hits backend
     const params = `page=${page}&size=${size}`;
     const url = `${this.baseUrl}/products/category/${categorySlug}?${params}`;
     console.log('API Call URL:', url); // DEBUG
@@ -174,8 +159,6 @@ getCategories(): Observable<{ name: string; slug: string; }[]> {
   }
 
   getProductById(id:number){
-    // OLD: return this.http.get(`${this.baseUrl}/products/${id}`);
-    // CHANGED: Extract data from Spring Boot response format
     return this.http.get<any>(`${this.baseUrl}/products/${id}`).pipe(
       map(response => response.data)
     );
